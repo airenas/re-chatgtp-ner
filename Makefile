@@ -12,7 +12,7 @@ $(work_dir):
 
 .SECONDEXPANSION:
 $(work_dir)/%_authors.json: data/orig/item_$$*/item_$$*.in.txt | $(work_dir)
-	$(python_cmd) chatgpt_ner/authors.py --input $^ > $@_
+	$(python_cmd) chatgpt_ner/ner_authors.py --input $^ > $@_
 	mv $@_ $@
 $(work_dir)/%_authors.csv: $(work_dir)/%_authors.json
 	$(python_cmd) chatgpt_ner/to_csv.py --input $^ --name $* > $@_
@@ -33,17 +33,22 @@ compare/authors: extract/authors
 
 
 $(work_dir)/out-inst.json: data/wanted.csv | $(work_dir)
-	$(python_cmd) chatgpt_ner/inst.py --input $^ > $@_
+	$(python_cmd) chatgpt_ner/ner_inst.py --input $^ --cache $@ > $@_
 	mv $@_ $@
 $(work_dir)/out-inst.csv: $(work_dir)/out-inst.json
+	$(python_cmd) chatgpt_ner/inst_to_csv.py --input $^ > $@_
+	mv $@_ $@
 
 extract/inst: $(work_dir)/out-inst.csv $(authors_json)
 
-compare/inst: $(work_dir)/out.csv $(authors_json)
-	$(python_cmd) chatgpt_ner/compare.py --gt data/wanted.csv --pred $(work_dir)/out.csv 
+compare/inst: extract/inst
+	$(python_cmd) chatgpt_ner/inst_compare.py --gt data/wanted.csv --pred $(work_dir)/out-inst.csv
 
 info:
 	echo $(authors)
 
 clean:
-	rm -rf work
+	rm -rf $(work_dir)
+
+clean/inst:
+	rm -f $(work_dir)/out-inst.json $(work_dir)/out-inst.csv

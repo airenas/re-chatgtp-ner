@@ -69,7 +69,7 @@ def main(argv):
             messages=[{"role": "system",
                        "content": "You are a NER tool. You will be provided text in a latex format. It is a first page of scientific article. "
                                   "Your task is to extract authors of the article. For each author extract an email, an institution, and address."},
-                      {"role": "system", "content": "Please extract the text as is. Do not change/update/fix text, like adding punctuation or etc."},            
+                      {"role": "system", "content": "Please extract the text as it is. Do not change/update/fix text, like adding punctuation or etc."},
                       {"role": "system", "content": "The output must be a valid json matching the schema"},
                       {"role": "system", "content": out_format},
                       {"role": "user", "content": file_data},
