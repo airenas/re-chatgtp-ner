@@ -1,18 +1,24 @@
 import argparse
+import sys
+
 import openai
 import os
 
-# Your OpenAI API key
-api_key = os.getenv('OPENAI_API_KEY')
+from chatgpt_ner.logger import logger
 
-# Initialize the OpenAI API client
-openai.api_key = api_key
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 
-def perform_ner_on_file(file_path):
+def main(argv):
+    logger.info("Starting")
+    parser = argparse.ArgumentParser(description="Perform Named Entity Recognition (NER) on text from a file.")
+    parser.add_argument("--input", nargs='?', required=True, help="Input file to parse")
+    args = parser.parse_args(args=argv)
+
     try:
         # Read the text from the specified file
-        with open(file_path, 'r', encoding='utf-8') as file:
+        logger.info("read file {}".format(args.input))
+        with open(args.input, 'r', encoding='utf-8') as file:
             text = file.read()
 
         # Define the prompt for ChatGPT
@@ -28,6 +34,9 @@ def perform_ner_on_file(file_path):
         "type": "object",
         "properties": {
           "name": {
+            "type": "string"
+          },
+          "email": {
             "type": "string"
           },
           "institutions": {
@@ -54,11 +63,13 @@ def perform_ner_on_file(file_path):
 }"""
 
         # Make the API call to ChatGPT
+        logger.info("call openai ...")
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "system",
                        "content": "You are a NER tool. You will be provided text in a latex format. It is a first page of scientific article. "
-                                  "Your task is to extract authors of the article. For each author extract an institution and address."},
+                                  "Your task is to extract authors of the article. For each author extract an email, an institution, and address."},
+                      {"role": "system", "content": "Please extract the text as is. Do not change/update/fix text, like adding punctuation or etc."},            
                       {"role": "system", "content": "The output must be a valid json matching the schema"},
                       {"role": "system", "content": out_format},
                       {"role": "user", "content": file_data},
@@ -66,17 +77,15 @@ def perform_ner_on_file(file_path):
             temperature=0.2,
             max_tokens=512
         )
-
+        logger.info("got resp")
         # Extract and print the model's response
         ner_result = response['choices'][0]['message']['content']
         print(f"\n{ner_result}\n")
+        logger.info("done")
     except Exception as e:
-        print(f"Error processing file {file_path}: {str(e)}")
+        logger.error(f"Error processing file {args.input}: {str(e)}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Perform Named Entity Recognition (NER) on text from a file.")
-    parser.add_argument("file_path", type=str, help="Path to the text file to process.")
-    args = parser.parse_args()
-
-    perform_ner_on_file(args.file_path)
+    main(sys.argv[1:])
