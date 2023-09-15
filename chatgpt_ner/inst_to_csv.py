@@ -22,8 +22,8 @@ def main(argv):
         data = []
         for inst in json_data:
             data.append([inst.get("string", ""), inst.get("institutionName"), inst.get("addressLine", ""),
-                         inst.get("city", ""), inst.get("postCode", ""), inst.get("country", "")])
-        df = pd.DataFrame(data, columns=["name", "institutionName", "addressLine", "city", "postCode", "country"])
+                         inst.get("city", ""), inst.get("postCode", ""), inst.get("country", ""), inst.get("state", "")])
+        df = pd.DataFrame(data, columns=["name", "institutionName", "addressLine", "city", "postCode", "country","state"])
 
         df.to_csv(sys.stdout, index=False)
         logger.info("done")

@@ -63,6 +63,9 @@ def extract(inst):
     "postCode": {
       "type": "string"
     },
+    "state": {
+      "type": "string"
+    }
     "country": {
       "type": "string"
     }
@@ -76,8 +79,9 @@ def extract(inst):
             model="gpt-3.5-turbo",
             messages=[{"role": "system",
                        "content": "You are a NER tool. You will be provided with one line of a text containing an institutional affiliation for the author. "
-                                  "Your task is to split the line into \n - institution name(s) (separated by comma if several) \n - adresss line,\n - post code,\n - city, \n - and country.\n "
-                                  " Some fields may be missing, except institution name."},
+                                  "Your task is to split the line into \n - institution name(s) (separated by comma if several) \n - adresss line,\n - post code,\n"
+                                  " - city, \n - state (for wxample in India),\n and country.\n "
+                                  "Some fields may be missing, except institution name."},
                       {"role": "system",
                        "content": "Fill the country if it is empty and you think that the country could be determined from a city or from an institution name"},
                       {"role": "system",

@@ -1,7 +1,7 @@
 log?=INFO
 python_cmd=PYTHONPATH=./ LOG_LEVEL=$(log) python
 ############################################################
-files=09_01 09_02 09_03 09_04
+files=1 2 09_01 09_02 09_03 09_04
 work_dir=work
 authors=$(patsubst %,$(work_dir)/%_authors.csv,$(files))
 authors_json=$(patsubst %,$(work_dir)/%_authors.json,$(files))
@@ -12,6 +12,9 @@ $(work_dir):
 
 .SECONDEXPANSION:
 $(work_dir)/%_authors.json: data/orig/item_$$*/item_$$*.in.txt | $(work_dir)
+	$(python_cmd) chatgpt_ner/ner_authors.py --input $^ > $@_
+	mv $@_ $@
+$(work_dir)/%_authors.json: data/orig/item_$$*/item_$$*_in.txt | $(work_dir)
 	$(python_cmd) chatgpt_ner/ner_authors.py --input $^ > $@_
 	mv $@_ $@
 $(work_dir)/%_authors.csv: $(work_dir)/%_authors.json

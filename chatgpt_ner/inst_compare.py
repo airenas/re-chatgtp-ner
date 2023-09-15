@@ -39,7 +39,7 @@ def main(argv):
     predd = {d.get("name"): d for d in pred}
 
     institutions = gtd.keys()
-    test_fiels = ["institutionName", "addressLine", "city", "postCode", "country"]
+    test_fiels = ["institutionName", "addressLine", "city", "state", "postCode", "country"]
     for f in test_fiels:
         logger.info(f"\n{f}")
         all, es = 0, 0
