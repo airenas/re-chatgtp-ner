@@ -1,7 +1,7 @@
 log?=INFO
 python_cmd=PYTHONPATH=./ LOG_LEVEL=$(log) python
 ############################################################
-files=1 2 09_01 09_02 09_03 09_04
+files=1 2 3 4 09_01 09_02 09_03 09_04
 work_dir=work
 authors=$(patsubst %,$(work_dir)/%_authors.csv,$(files))
 authors_json=$(patsubst %,$(work_dir)/%_authors.json,$(files))

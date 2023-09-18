@@ -24,6 +24,12 @@ def calc(gt, pred_f, param):
     return len(wanted), i, d
 
 
+def err_p(total, errs):
+    if total == 0:
+        return 0
+    return errs / total * 100
+
+
 def main(argv):
     parser = argparse.ArgumentParser(description="Compares two files",
                                      epilog="E.g. " + sys.argv[0] + "",
@@ -48,7 +54,7 @@ def main(argv):
         pred_f = pred[pred['file'] == f]
         f_all, f_ei, f_ed = calc(gt_f, pred_f, "author")
         all, ei, ed = all + f_all, ei + f_ei, ed + f_ed
-    logger.info("== all: {}\terr: {}\tins:{}\tdel: {}".format(all, ei + ed, ei, ed))
+    logger.info("== all: {}\terr: {:.2f}% {}\tins:{}\tdel: {}".format(all, err_p(all, ei + ed), ei + ed, ei, ed))
 
     logger.info("\nAuthors-institutions")
     all, ei, ed = 0, 0, 0
@@ -61,7 +67,7 @@ def main(argv):
             pred_a = pred_f[pred_f['author'] == a]
             f_all, f_ei, f_ed = calc(gt_a, pred_a, "institution")
             all, ei, ed = all + f_all, ei + f_ei, ed + f_ed
-    logger.info("== all: {}\terr: {}\tins:{}\tdel: {}".format(all, ei + ed, ei, ed))
+    logger.info("== all: {}\terr: {:.2f}% {} \tins:{}\tdel: {}".format(all, err_p(all, ei + ed), ei + ed, ei, ed))
 
     logger.info("\nAuthors-emails")
     all, ei, ed = 0, 0, 0
@@ -74,7 +80,7 @@ def main(argv):
             pred_a = pred_f[pred_f['author'] == a]
             f_all, f_ei, f_ed = calc(gt_a, pred_a, "email")
             all, ei, ed = all + f_all, ei + f_ei, ed + f_ed
-    logger.info("== all: {}\terr: {}\tins:{}\tdel: {}".format(all, ei + ed, ei, ed))
+    logger.info("== all: {}\terr: {:.2f}% {}\tins:{}\tdel: {}".format(all, err_p(all, ei + ed), ei + ed, ei, ed))
     logger.info("done")
 
 

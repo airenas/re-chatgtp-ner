@@ -3,6 +3,7 @@ import sys
 
 import pandas as pd
 
+from chatgpt_ner.compare import err_p
 from chatgpt_ner.logger import logger
 
 
@@ -51,7 +52,7 @@ def main(argv):
                 continue
             f_es = calc(gt_f, pred_f, f)
             all, es = all + 1, es + f_es
-        logger.info("== all: {}\terr: {}".format(all, es))
+        logger.info("== all: {}\terr: {:.2f}% {}".format(all, err_p(all, es), es))
     logger.info("done")
 
 
